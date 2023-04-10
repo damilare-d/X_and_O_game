@@ -117,32 +117,35 @@ class _XoxoGameState extends State<XoxoGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: GridView.builder(
-            itemCount: 9,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              final row = index ~/ 3;
-              final col = index % 3;
-              return GestureDetector(
-                onTap: _handleTap(index),
-                child: Container(
-                  color: Colors.grey[300],
-                  child: Center(
-                    child: Text(
-                      _board[row][col],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: GridView.builder(
+        itemCount: 9,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
         ),
-      ],
+        itemBuilder: (BuildContext context, int index) {
+          final row = index ~/ 3;
+          final col = index % 3;
+          return GestureDetector(
+            onTap: () => _handleTap(index),
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  )),
+              child: Center(
+                child: Text(
+                  _board[row][col],
+                  style: const TextStyle(fontSize: 60),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
