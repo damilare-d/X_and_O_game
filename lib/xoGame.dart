@@ -26,8 +26,15 @@ class _XoxoGameState extends State<XoxoGame> {
       final col = index % 3;
 
       if (_board[row][col] == '') {
-        _board[row][col] = 'o';
-        _currentPlayer = 'x';
+        setState(() {
+          _board[row][col] = _currentPlayer;
+
+          if (_currentPlayer == "X") {
+            _currentPlayer = "O";
+          } else {
+            _currentPlayer = "X";
+          }
+        });
         _checkGameEnd();
       }
     });
