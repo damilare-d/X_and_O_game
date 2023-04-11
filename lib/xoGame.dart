@@ -125,33 +125,49 @@ class _XoxoGameState extends State<XoxoGame> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: GridView.builder(
-          itemCount: 9,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            final row = index ~/ 3;
-            final col = index % 3;
-            return GestureDetector(
-              onTap: () => _handleTap(index),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    )),
-                child: Center(
-                  child: Text(
-                    _board[row][col],
-                    style: const TextStyle(fontSize: 60),
-                  ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 3,
+              child: GridView.builder(
+                itemCount: 9,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisExtent: 150,
+                  crossAxisSpacing: 1,
+                  mainAxisSpacing: 1,
+                  childAspectRatio: 1,
                 ),
+                itemBuilder: (BuildContext context, int index) {
+                  final row = index ~/ 3;
+                  final col = index % 3;
+                  return GestureDetector(
+                    onTap: () => _handleTap(index),
+                    child: Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 1,
+                          )),
+                      child: Center(
+                        child: Text(
+                          _board[row][col],
+                          style: const TextStyle(fontSize: 60),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
+            ),
+            TextButton(onPressed: () {}, child: const Text('Retry'))
+          ],
         ),
       ),
     );
