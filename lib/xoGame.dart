@@ -108,6 +108,7 @@ class _XoxoGameState extends State<XoxoGame> {
         builder: (BuildContext context) {
           return AlertDialog(
             actions: [
+              Text(message),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
