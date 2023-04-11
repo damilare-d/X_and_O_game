@@ -57,8 +57,8 @@ class _XoxoGameState extends State<XoxoGame> {
     //to check for verical wins
     for (int col = 0; col < 3; col++) {
       if (_board[0][col] != '' &&
-          _board[col][0] == _board[col][1] &&
-          _board[col][1] == _board[col][2]) {
+          _board[0][col] == _board[1][col] &&
+          _board[1][col] == _board[2][col]) {
         //the game is run with the player with all three boxes
         _showGameOverDialog(_board[col][0]);
         return;
