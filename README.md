@@ -1,6 +1,8 @@
 # xoxo_game
 
-A new Flutter project.
+A new Flutter project of the game x and o between two players.
+still in development.
+![xogame1](https://user-images.githubusercontent.com/83401880/231072072-83ad1b69-7f8a-4325-ae99-2b2bb77f1efa.png)
 
 ## Getting Started
 
