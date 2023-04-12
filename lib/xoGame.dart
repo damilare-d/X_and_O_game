@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -12,12 +15,13 @@ class XoxoGame extends StatefulWidget {
 class _XoxoGameState extends State<XoxoGame> {
   List<List<String>> _board = [];
   String _currentPlayer = 'x';
+  bool _isPlayingWithFriend = false;
 
   @override
   void initState() {
     super.initState();
     _board = List.generate(3, (_) => List.generate(3, (_) => ""));
-    _currentPlayer = 'o';
+    _currentPlayer = 'X';
   }
 
   _handleTap(int index) {
@@ -35,12 +39,32 @@ class _XoxoGameState extends State<XoxoGame> {
             _currentPlayer = "X";
           }
         });
+        if (_board[row][col] == '' && _isPlayingWithFriend == false) {
+          _computerMove();
+          _makeComputerMove();
+        }
         _checkGameEnd();
       }
     });
   }
 
-  void _checkGameEnd() {
+  void _computerMove() {
+    bool moved = false;
+    while (!moved) {
+      final int row = Random().nextInt(3);
+      final int col = Random().nextInt(3);
+
+      if (_board[row][col] == '') {
+        setState(() {
+          _board[row][col] = _currentPlayer;
+          _currentPlayer = (_currentPlayer == 'O') ? 'X' : 'O';
+        });
+        moved = true;
+      }
+    }
+  }
+
+  _checkGameEnd() {
     bool emptyBoxesExist = false;
 
     //to check for horizontal wins
@@ -60,7 +84,7 @@ class _XoxoGameState extends State<XoxoGame> {
           _board[0][col] == _board[1][col] &&
           _board[1][col] == _board[2][col]) {
         //the game is run with the player with all three boxes
-        _showGameOverDialog(_board[col][0]);
+        _showGameOverDialog(_board[0][col]);
         return;
       }
     }
@@ -73,9 +97,9 @@ class _XoxoGameState extends State<XoxoGame> {
       _showGameOverDialog(_board[0][0]);
       return;
     }
-    if (_board[0][2] != '' &&
-        _board[0][2] == _board[1][1] &&
-        _board[1][1] == _board[2][2]) {
+    if (_board[2][0] != '' &&
+        _board[2][0] == _board[1][1] &&
+        _board[1][1] == _board[0][2]) {
       //the game is run with the player with all three boxes
       _showGameOverDialog(_board[0][2]);
       return;
@@ -123,10 +147,77 @@ class _XoxoGameState extends State<XoxoGame> {
         });
   }
 
+  void _showOpponentDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('choose opponent'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop;
+                      setState(() {
+                        _isPlayingWithFriend = true;
+                        _board = List.generate(
+                            3, (_) => List.generate(3, (_) => ""));
+                      });
+                    },
+                    child: const Text('play with friend'),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop;
+                        setState(() {
+                          _isPlayingWithFriend = false;
+                          _board = List.generate(
+                              3, (_) => List.generate(3, (_) => ""));
+                        });
+                      },
+                      child: const Text('Play with computer'))
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _makeComputerMove() {
+    // Wait for 1 second to simulate "thinking"
+    Future.delayed(Duration(seconds: 1), () {
+      // Generate a random number between 0 and 8
+      int index = Random().nextInt(9);
+
+      // Check if the cell at the generated index is empty
+      if (_board[index ~/ 3][index % 3] == "") {
+        setState(() {
+          // Make the move on the empty cell
+          _board[index ~/ 3][index % 3] = "O";
+
+          // Switch to the other player
+          _currentPlayer = "X";
+        });
+      } else {
+        // If the cell is not empty, call this method again to generate a new random index
+        _makeComputerMove();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: _showOpponentDialog,
+            child: const Text('Change Opponent'),
+          )
+        ],
+      ),
       body: SafeArea(
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -167,7 +258,34 @@ class _XoxoGameState extends State<XoxoGame> {
                 },
               ),
             ),
-            TextButton(onPressed: () {}, child: const Text('Retry'))
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    _board =
+                        List.generate(3, (_) => List.generate(3, (_) => ''));
+                  });
+                },
+                child: const Text('Retry')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop;
+                  setState(() {
+                    _isPlayingWithFriend = true;
+                    _board =
+                        List.generate(3, (_) => List.generate(3, (_) => ""));
+                  });
+                },
+                child: const Text('Play with Friend')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop;
+                  setState(() {
+                    _isPlayingWithFriend = false;
+                    _board =
+                        List.generate(3, (_) => List.generate(3, (_) => ""));
+                  });
+                },
+                child: const Text('Play with Computer')),
           ],
         ),
       ),
