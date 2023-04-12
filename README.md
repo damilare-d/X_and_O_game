@@ -2,7 +2,11 @@
 
 A new Flutter project of the game x and o between two players.
 still in development.
+
+
 ![xogame1](https://user-images.githubusercontent.com/83401880/231072072-83ad1b69-7f8a-4325-ae99-2b2bb77f1efa.png)
+![xogame2](https://user-images.githubusercontent.com/83401880/231140513-cce9492d-5561-4e06-b308-7fb426ee24aa.png)
+
 
 ## Getting Started
 
