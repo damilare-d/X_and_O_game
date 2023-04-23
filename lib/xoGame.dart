@@ -16,6 +16,7 @@ class _XoxoGameState extends State<XoxoGame> {
   List<List<String>> _board = [];
   String _currentPlayer = 'x';
   bool _isPlayingWithFriend = false;
+  List<int> tiles = List.filled(9, 0);
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _XoxoGameState extends State<XoxoGame> {
         if (_board[row][col] == '' && _isPlayingWithFriend == false) {
           _computerMove();
           _makeComputerMove();
+          runAi();
         }
         _checkGameEnd();
       }
@@ -204,6 +206,54 @@ class _XoxoGameState extends State<XoxoGame> {
         _makeComputerMove();
       }
     });
+  }
+
+  void runAi() async {
+    await Future.delayed(Duration(
+      milliseconds: 200,
+    ));
+
+    int? winning;
+    int? blocking;
+    int? normal;
+
+    for (var i = 0; i < 9; i++) {
+      var val = tiles[i];
+
+      if (val > 0) {
+        continue;
+      }
+      var future = [...tiles]..[i] = 2;
+      if (isWinning(2, future)) {
+        winning = i;
+      }
+      if (isWinning(1, future)) {
+        blocking = i;
+      } else {
+        normal = i;
+      }
+      var move = winning ?? blocking ?? normal;
+
+      if (move != null) {
+        setState(() {
+          tiles[move] = 2;
+        });
+      }
+    }
+  }
+
+  bool isWinning(int who, List<int> tiles) {
+    if (tiles.length < 9) {
+      return false;
+    }
+    return (tiles[0] == who && tiles[1] == who && tiles[2] == who) ||
+        (tiles[3] == who && tiles[4] == who && tiles[5] == who) ||
+        (tiles[6] == who && tiles[7] == who && tiles[8] == who) ||
+        (tiles[0] == who && tiles[3] == who && tiles[6] == who) ||
+        (tiles[1] == who && tiles[4] == who && tiles[7] == who) ||
+        (tiles[2] == who && tiles[5] == who && tiles[8] == who) ||
+        (tiles[6] == who && tiles[4] == who && tiles[2] == who) ||
+        (tiles[0] == who && tiles[4] == who && tiles[8] == who);
   }
 
   @override
